@@ -79,26 +79,7 @@ class GenericModel:
         pathlib_utils.delete_folder(self.model_dir)
 
 
-# Used for sequence-to-sequence learning
-class EncoderDecoder(GenericModel):
-    def build_model(self):
-        # RNN input shape per-batch is (max_seq_char_len, len(chars))
-        encoder_inputs = Input(shape=(None, len(chars)), name="encoder_input")
-        encoder = LSTM(latent_dim, return_state=True, name="encoder_lstm")
-        _, enc_state_h, enc_state_c = encoder(encoder_inputs)
-        encoder_states = [enc_state_h, enc_state_c]
-
-        decoder_inputs = Input(shape=(None, len(chars)), name="decoder_input")
-        decoder_lstm = LSTM(latent_dim, return_sequences=True, return_state=True, name="decoder_lstm")
-        decoder_lstm_outputs, _, _ = decoder_lstm(decoder_inputs, initial_state=encoder_states)
-        decoder_dense = Dense(len(chars), activation='softmax', name="decoder_dense")
-        decoder_outputs = decoder_dense(decoder_lstm_outputs)
-
-        model = Model(inputs=[encoder_inputs, decoder_inputs], outputs=decoder_outputs)
-        self.model = model
-
-
-# Used mainly for testing
+# Used mainly for testing and examples
 class FeedForward(GenericModel):
     def build_model(self):
         inputs = Input(shape=(2,))
@@ -111,6 +92,4 @@ class FeedForward(GenericModel):
         outputs = dense2(outputs)
         outputs = final(outputs)
 
-        model = Model(inputs=inputs, outputs=outputs)
-
-        self.model = model
+        self.model = Model(inputs=inputs, outputs=outputs)
