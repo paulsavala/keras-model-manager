@@ -4,6 +4,8 @@ from keras.optimizers import Adam
 from keras.callbacks import TensorBoard, EarlyStopping
 
 from pathlib import Path
+from datetime import datetime
+
 
 class GenericModel:
     def __init__(self, name):
@@ -12,6 +14,7 @@ class GenericModel:
         self.trained_model = None
         self.version = 1
         self.auto_save = False
+        self.auto_load = False
 
         self.model_dir = Path(f'models/{self.name}')
         if not self.model_dir.exists(): self.model_dir.mkdir()
@@ -20,12 +23,15 @@ class GenericModel:
         self.model_tensorboard_dir = self.model_dir / Path('tensorboard')
         if not self.model_tensorboard_dir.exists(): self.model_tensorboard_dir.mkdir()
 
+        if self.auto_load:
+            self.model = self.build_model()
+            self.load_model()
+
     def build_model(self):
         raise NotImplementedError
 
-    def train_model(self, X, y, batch_size=64, epochs=50, early_stopping=False,
-                    metrics=['accuracy'], validation_split=0.2, optimizer=Adam, optimizer_params=dict(),
-                    loss='categorical_crossentropy', ):
+    def train_model(self, X, y, batch_size=32, epochs=1, early_stopping=False, validation_split=0.0,
+                    optimizer=None, optimizer_params=dict(), loss=None, metrics=None):
         # Build various models with different hidden units in the LSTM
         callbacks = [TensorBoard(log_dir=self.model_tensorboard_dir, histogram_freq=0, write_graph=True, write_images=True)]
         if early_stopping:
@@ -43,13 +49,20 @@ class GenericModel:
 
         self.trained_model = self.model
         if self.auto_save:
-
-
+            self.save_model(update_version=True)
 
     def save_model(self, update_version=False):
         if update_version:
             self.version += 1
-        self.model.save_weights(model_weights_dir / Path(f'{datetime.now().strftime("%Y_%m_%d__%H:%M:%S")}.keras'))
+        self.model.save_weights(
+            self.model_weights_dir / Path(f'v{self.version}.weights')
+        )
+
+    def load_model(self):
+        assert self.model is not None, 'Build a model first using MyModel.build_model()'
+        weights_file = self.model_weights_dir / Path(f'v{self.version}.weights')
+        assert weights_file.exists(), f'Weights file does not exist for version {self.version} in directory {self.model_weights_dir}'
+        self.model.load_weights(weights_file)
 
 
 class EncoderDecoder(GenericModel):
