@@ -1,10 +1,9 @@
 from keras.models import Model
-from keras.layers import Input, Dense, LSTM
+from keras.layers import Input, Dense
 from keras.callbacks import TensorBoard, EarlyStopping
 
 from pathlib import Path
 from utils import pathlib_utils
-import json
 from datetime import datetime
 
 
