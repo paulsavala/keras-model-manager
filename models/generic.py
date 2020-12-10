@@ -102,7 +102,7 @@ class GenericModel:
         file_io.delete_folder(self.base_model_dir)
 
 
-class GenericXGBModel(GenericModel):
+class XGBModel(GenericModel):
     def __init__(self, name, version=1, classifier=True, xgb_kwargs=None):
         super().__init__(name, version)
         self.xgb_kwargs = xgb_kwargs
@@ -149,7 +149,7 @@ class GenericXGBModel(GenericModel):
         self.model.load_model(model_path)
 
 
-class GenericTensorflowModel(GenericModel):
+class TensorflowModel(GenericModel):
     '''
     A generic class for all models. Models which inherit from this gain the ability to keep notes, easily be saved
     and deleted, implement early stopping, etc.

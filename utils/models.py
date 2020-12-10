@@ -2,7 +2,7 @@ from tensorflow.keras.models import load_model
 
 from pathlib import Path
 
-from models.generic import GenericTensorflowModel
+from models.generic import TensorflowModel
 from utils.file_io import smart_load
 
 
@@ -11,7 +11,7 @@ def load_model(name, model_dir, version=1, attr_dir=None):
     assert model_file.exists(), f'Model file does not exist for version {version} in directory {self.model_dir}'
     raw_model = load_model(model_file.as_posix())
 
-    model_obj = GenericTensorflowModel(name, version)
+    model_obj = TensorflowModel(name, version)
 
     if attr_dir is not None:
         _load_attributes(attr_dir, model_obj)
