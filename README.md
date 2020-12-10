@@ -1,13 +1,16 @@
 # Model manager
 A Python library to manage Tensorflow 2 and XGBoost models.
 
+## Installation
+I _have not_ set this up as an installable package (e.g. using `pip`). To "install it", all you do is download the files (clone them) and place the folder inside whatever folder you're working in. Then you can simply follow what's shown below. Note that for the code below I have the downloaded folder named as `model_manager`. Make sure yours is named the same.
+
 ## Usage
 ### XGBoost
 Instantiate a new XGBoost model directly through this package. To do so, just pass a `name` (used for saving the model), a bool `classifier` stating whether this is a classifier or regressor, and a dictionary of parameters to pass to XGBoost, called `xgb_kwargs`.
 
 The XGBoost model will be accessible directly at `XGBModel.model`.
 ```
-from model_manager import XGBModel
+from model_manager.models import XGBModel
 
 xgb_params = {'n_estimators': 100, 'max_depth': 30, 'learning_rate': 0.005}
 xgb = XGBModel(name='my_model', classifier=True, xgb_kwargs=xgb_params)
@@ -44,3 +47,6 @@ new_xgb.load_model(version=2)
 
 assert new_xgb.model == xgb.model
 ```
+
+### Tensorflow 2
+In progress...
